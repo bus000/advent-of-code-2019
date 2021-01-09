@@ -93,6 +93,7 @@ import qualified Text.Parsec.Number as P
 import Data.IntMap.Strict (IntMap)
 import qualified Data.IntMap.Strict as IntMap
 import qualified Control.Monad as C
+import qualified Data.Maybe as Maybe
 
 data Instruction
     = Add !Int !Int !Int
@@ -106,7 +107,7 @@ newtype Execution a = Execution (ExecutionState -> (Either ExecutionError a, Exe
 
 instance Monad Execution where
     (Execution f1) >>= f2 = Execution $ \s0 -> case f1 s0 of
-        (Right v, s1) -> let Execution e = (f2 v) in e s1
+        (Right v, s1) -> let Execution e = f2 v in e s1
         (Left e, s1) -> (Left e, s1)
 
     return v = Execution $ \s -> (Right v, s)
@@ -133,13 +134,15 @@ main :: IO ()
 main = defaultMain parseInput handleInput
 
 handleInput :: Program -> IO ()
-handleInput program = print $ runProgram program'
+handleInput program = case runProgram program' of
+    Right output -> print output
+    Left err -> print err
   where
     program' = IntMap.insert 2 2 . IntMap.insert 1 12 $ program
 
-runProgram :: Program -> Either ExecutionError ExecutionState
+runProgram :: Program -> Either ExecutionError Int
 runProgram program = case result of
-    Right _ -> Right state
+    Right _ -> Right (Maybe.fromJust . IntMap.lookup 0 . exInstructions $ state)
     Left err -> Left err
   where
     initialState = ExecutionState program 0
@@ -194,7 +197,7 @@ executionError reason = Execution $ \state ->
 
 writePosition :: Int -> Int -> Execution ()
 writePosition key value = Execution $ \state ->
-    let instructions = exInstructions $ state
+    let instructions = exInstructions state
         instructions' = IntMap.insert key value instructions
         state' = state { exInstructions = instructions' }
     in (Right (), state')

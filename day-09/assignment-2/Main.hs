@@ -24,7 +24,6 @@ import qualified Control.Monad as C
 import qualified Control.Monad.State as C
 import qualified Control.Monad.Except as C
 import qualified Control.Concurrent.Chan as C
-import qualified Control.Concurrent as C
 import qualified Control.Exception as C
 
 data Instruction

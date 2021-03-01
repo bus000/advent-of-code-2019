@@ -34,14 +34,8 @@ import AdventOfCode
 import IntCode
 import qualified Data.Text as T
 import qualified Text.Parsec as P
-import qualified Text.Parsec.Number as P
-import Data.IntMap.Strict (IntMap)
-import qualified Data.IntMap.Strict as IntMap
 import qualified Control.Monad as C
-import qualified Control.Monad.State as C
-import qualified Control.Monad.Except as C
 import qualified Control.Concurrent as C
-import qualified Data.Set as Set
 import qualified Data.Map as Map
 
 main :: IO ()
